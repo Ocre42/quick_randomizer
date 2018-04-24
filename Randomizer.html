@@ -1,0 +1,263 @@
+<html>
+<head>
+	<title>Randomizer</title>
+	<script type="text/javascript" src="js/jquery-2.1.4.min.js"></script>
+    <script type="text/javascript" src="js/bootstrap-filestyle.js"> </script>
+    <script type="text/javascript" src="js/bootstrap.js"></script>
+    <script type="text/javascript" src="js/TimeCircles.js"></script>
+    <script type="text/javascript" src="js/bootstrap-select.js"></script>
+        <link rel="stylesheet" href="css/TimeCircles.css" />
+    <link rel="stylesheet" href="css/bootstrap.css">
+    <link rel="stylesheet" href="css/bootstrap-theme.css">
+    <link rel="stylesheet" href="css/bootstrap.css.map">
+    <link rel="stylesheet" href="css/bootstrap-select.css">
+    <link rel="stylesheet" href="css/bootstrap-select.css.map">
+    <link rel="stylesheet" href="css/bootstrap-theme.css.map">
+    <link rel="stylesheet" href="css/jquery.bootstrap-touchspin.css">
+    <meta name="randomizer" content="desarrollado para HNMUN UCAB Guayana">
+</head>
+<body>
+	<div class="jumbotron" style="color: white; background-image: url(blue.jpg);">
+		<div class="container-fluid text-center">
+			<a href="randomizer.html"><h1 style="font-family:verdana color:white;">Randomizer</h1></a>
+		</div>
+	</div>
+
+	<div class="page-header" id="inicio">
+        <p align="center">
+        <img src="logo.jpeg" style="max-height:300px;" id="logo"><br/>
+        <img src="diamond2.png"><br/>
+        <img id="diamond2" src="diamond2.png"><br/>
+        <font size=5><b>
+        	<a href="javascript:HideAllShowOne('ingresar')">Start</a></b></font><br/>
+        <hr/></p>
+    </div>
+
+    <div class="container">
+    	<section id="wrapper">
+    		<div class="page-header" id="ingresar" style="display: none;">
+    			<div class="row">
+    				<div class="col-md-3">
+    						<div class="form group">
+                  				<label for="cantidadp">Number of words:</label>
+                  				<input id="cant" class="form-control" name="cant" value="0">
+                			</div>
+                			<br/>
+                		
+    				</div>
+    				<div class="col-md-3">
+
+    						<div class="form group">
+                  				<label for="seg">Time per word:</label>
+                  				  <select class="selectpicker" id="seg">
+                            <option value="10">10 seconds</option>
+                            <option value="15">15 seconds</option>
+                            <option value="20">20 seconds</option>
+                            <option value="30">30 seconds</option>
+                            <option value="60">60 seconds</option>
+                          </select>
+                			</div>
+                			<br/>
+
+    				</div>
+    				<div class="col-md-3">
+
+    						<div class="form group">
+                  				<label for="min">Total Time:</label>
+                  				<select class="selectpicker" id="min">
+                            <option value="60">1 Minute</option>
+                            <option value="120">2 Minutes</option>
+                            <option value="180">3 Minutes</option>
+                            <option value="300">5 Minutes</option>
+                            <option value="600">10 Minutes</option>
+                          </select>
+                			</div>
+                			<br/>
+                		
+    				</div>
+    				<div class="col-md-3">
+    					<br/>
+    					<button class="btn btn-primary btn-lg btn-block" onclick="goTime();">Go!</button>
+
+    				</div>
+    			</div>
+    			<div class="row">
+    					<div class="container" id="palabras">
+
+    					</div>
+    			</div>
+    		</div>
+    	</section>
+    </div>
+
+
+
+    <div class="container">
+      <section>
+        <div class="page-header" id="randomizar" style="display: none;">
+          <h1 id="worddisplay" style="text-align: center; font-size: 1000%;">Palabras</h1>
+          <div class="row">
+          <div class="col-md-3"></div>
+          <div class="col-md-6">
+            <h2><div id="CountDownTimer" style="width: 1000px; height: 250px;"></div></h2>
+          </div>
+          <div class="col-md-3"></div>
+        </div>
+
+          <div class="col-md-3"></div>
+          <div class="col-md-3"><h1 style="text-align: left;"><a href="javascript:volver()">Back</a></h1></div>
+          <div class="col-md-3"><h1 style="text-align: right;"><a href="javascript:continuar()">Continue</a></h1></div>
+          <div class="col-md-3"></div>
+        </br>
+        </div>
+      </section>
+    </div>
+
+
+
+
+    <script type="text/javascript" src="js/jquery.bootstrap-touchspin.js"></script>
+    	<script>
+		var limit = 40;
+		var counter= 0;
+    var words=[];
+    var using = [];
+    var interval;
+            $("input[name='cant']").TouchSpin({
+            	min: 0,
+            }).on('change', function (){ 
+            	var number = $(this).val();
+            	
+            	if ((number) >= limit)  {
+          			alert("Word limit reached");
+          			number=limit;
+     				}
+     			if(number > counter){
+     				for(i=counter;i<number;i++) {
+     					var newdiv = document.createElement('div');
+          				newdiv.innerHTML = "<div class='col-md-4'><input class='form-control' type='text' placeholder='Text' id='word"+i+"'></div>";
+          				document.getElementById("palabras").appendChild(newdiv);
+     				}
+     				counter=number;
+     			}else{
+     				if(number<counter){
+     					for(i=counter;i>number-1;i--){
+     						$('#word'+i).parent().remove()
+     					}
+     					counter=number;
+     				}
+     			}
+     				
+     			
+            ;});
+        $("#CountDownTimer").TimeCircles({ time: { Days: { show: false }, Hours: { show: false } }}).addListener(
+            function(unit, value, total){
+              if(total==0){
+                document.getElementById("worddisplay").innerHTML = "TIME!!";
+                $("#CountDownTimer").TimeCircles().stop();
+              }
+            });
+          $(".startTimer").click(function() {
+              $("#CountDownTimer").TimeCircles().start();
+          });
+          $(".stopTimer").click(function() {
+              $("#CountDownTimer").TimeCircles().stop();
+          });
+          $('.selectpicker').selectpicker();
+        </script>
+
+
+<script type="text/javascript" language="JavaScript"><!--
+
+
+
+function RemoveContent(d) {
+document.getElementById(d).style.display = "none";
+}
+function InsertContent(d) {
+document.getElementById(d).style.display = "";
+}
+
+function HideAllShowOne(d) {
+// Between the quotation marks, list the id values of each div.
+
+var IDvaluesOfEachDiv = "inicio ingresar randomizar";
+
+//-------------------------------------------------------------
+IDvaluesOfEachDiv = IDvaluesOfEachDiv.replace(/[,\s"']/g," ");
+IDvaluesOfEachDiv = IDvaluesOfEachDiv.replace(/^\s*/,"");
+IDvaluesOfEachDiv = IDvaluesOfEachDiv.replace(/\s*$/,"");
+IDvaluesOfEachDiv = IDvaluesOfEachDiv.replace(/  +/g," ");
+var IDlist = IDvaluesOfEachDiv.split(" ");
+for(var i=0; i<IDlist.length; i++) { RemoveContent(IDlist[i]); }
+InsertContent(d);
+}
+
+function getPalabras(d){
+  for(i=0;i<d;i++){
+    words[words.length] = document.getElementById("word"+i).value;
+  }
+}
+
+function randomize(using){
+    var y, x;
+    x= randomBetween(0,(using.length-1));
+    y= using[x];
+    using.splice(x,1);
+    return y;
+}
+
+function volver(){
+  HideAllShowOne('ingresar');
+  words = [];
+  using = [];
+  $("#CountDownTimer").TimeCircles().restart();
+  clearInterval(interval);
+}
+
+function continuar(){
+  clearInterval(interval);
+  $("#CountDownTimer").TimeCircles().restart();
+  goTime();
+}
+
+function randomBetween(min, max)
+{
+return min + Math.floor(Math.random() * (max - min + 1));
+}
+
+
+function goTime(){
+  $(document).ready(function(e){
+  var total = document.getElementById("min");
+  var $timer = $('div#CountDownTimer', window.parent.document);
+   $timer.data('timer', total.value);
+   var tc = $timer.TimeCircles().rebuild().restart();
+   var cantidad = document.getElementById("cant");
+   getPalabras(cantidad.value);
+  HideAllShowOne('randomizar');
+
+
+  if(using.length==0){
+    using = words.slice();
+  }
+  document.getElementById("worddisplay").innerHTML = randomize(using);
+  var startTime = new Date().getTime();
+  interval = setInterval(function(){
+     if(new Date().getTime()+1000 - startTime > total.value*1000){
+        clearInterval(interval);
+        return;
+    }
+    if(using.length==0){
+      using = words.slice();
+    }
+      document.getElementById("worddisplay").innerHTML = randomize(using);
+    
+
+  },document.getElementById("seg").value*1000);
+  });
+}
+//--></script>
+
+</body>
+</html>
